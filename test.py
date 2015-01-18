@@ -78,10 +78,13 @@ class GetNews(Resource):
                             page = urllib2.urlopen(url)
                             soup = BeautifulSoup(page.read())
                             description2=soup.find('meta',{'itemprop':'description'})
+                            timestamp=soup.find('time',{'itemprop':'datePublished'})
                             try:
+                                    time2.append(unicodedata.normalize('NFKD', timestamp.text.strip("\n")).encode('ascii','ignore'))
                                     desc2.append(unicodedata.normalize('NFKD', description2['content']).encode('ascii','ignore'))
                                     #print unicodedata.normalize('NFKD', description2['content']).encode('ascii','ignore')
                             except:
+                                    time2.append("No Time Specified")
                                     desc2.append("No Description...")
                                     #print "No Description..."
 
@@ -92,10 +95,13 @@ class GetNews(Resource):
                             page = urllib2.urlopen(url)
                             soup = BeautifulSoup(page.read())
                             description1=soup.find('meta',{'itemprop':'description'})
+                            timestamp=soup.find('time',{'itemprop':'datePublished'})
                             try:
+                                    time1.append(unicodedata.normalize('NFKD', timestamp.text.strip("\n")).encode('ascii','ignore'))
                                     desc1.append(unicodedata.normalize('NFKD', description1['content']).encode('ascii','ignore'))
                                     #print unicodedata.normalize('NFKD', description1['content']).encode('ascii','ignore')
                             except:
+                                    time1.append("No Time Specified")
                                     desc1.append("No Description...")
                                     #print "No Description..."
 
