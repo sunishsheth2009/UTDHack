@@ -9,68 +9,23 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <script>
         function GetSearch(){
-            query=document.getElementById('search').value;
-            query.replace(' ','%20');
-            document.getElementById('News').innerHTML='<img src="loading.gif" alt="Loading..." height="42" width="42">';
-            $.get('http://localhost:5000/search/'+query,function(data){
-                data2=JSON.parse(data);
-                document.getElementById('News').innerHTML="";
-                console.log(data);
-                if(data2.length==0)
-                {
-                    document.getElementById('search').innerHTML='';
-                }
-                for (var i=0;i<data2.length;i++)
-                {
-                document.getElementById('News').innerHTML+='<a href="'+data2[i].url+'"><h3>'+data2[i].title+'</h3></a><p>'+data2[i].url+'</p><p>'+data2[i].description+'</p>';
-                    };
-        });
+            console.log(document.getElementById('search').textContent);
         };
         function LoadCategory(category){
             console.log(category);
-            document.getElementById('dropdownMenu1').innerHTML=category+" <span class='caret'></span>";
-            document.getElementById('News').innerHTML='<img src="loading.gif" alt="Loading..." height="200" width="200">';
-            category.replace(' ','%20');
             $.get('http://localhost:5000/category/'+category,function(data){
                data2=JSON.parse(data);
                document.getElementById('News').innerHTML="";
                console.log(data);
                 for (var i=0;i<data2.length;i++)
                 {
-                document.getElementById('News').innerHTML+='<a href="'+data2[i].url+'"><h3>'+data2[i].title+'</h3></a><p>'+data2[i].url+'</p><p>'+data2[i].description+'</p>';
+                document.getElementById('News').innerHTML+='<a href="'+data2[i].url+'"><h1>'+data2[i].title+'</h1></a><p>'+data2[i].url+'</p><p>'+data2[i].description+'</p>';
                 }
 
             });
         };
-
+        
         $('document').ready(function(){
-            /*$.ajax({
-                url: "http://localhost:5000/getcategories",
-
-    // The name of the callback parameter, as specified by the YQL service
-    jsonp: "callback",
-
-    // Tell jQuery we're expecting JSONP
-    dataType: "jsonp",
-
-    // Tell YQL what we want and that we want JSON
-    data: {
-        q: "",
-        format: "json"
-    },
-
-    // Work with the response
-    success: function( response ) {
-        data=JSON.parse(response);
-                    var list=data.list;
-                    console.log(list);
-                    for(var i=0;i< list.length;i++){
-                        console.log(list[i].category);
-                        document.getElementById("categorylist").innerHTML+='<li role="presentation" id="'+list[i].category+'" onclick="LoadCategory(this.id)"><a role="menuitem" tabindex="-1" href="#">'+list[i].category+'</a></li>';
-                    };
-    }
-            }
-                   );*/
             $.get('http://localhost:5000/getcategories',function(data2){
                     data=JSON.parse(data2);
                     var list=data.list;
@@ -98,7 +53,7 @@
 //                console.log('event called');
 //                    LoadCategory(e.target.value);
 //                    });
-
+ 
             </script>
 </head>
 <title>News API Test</title>
@@ -129,7 +84,7 @@
                 </form>
             </div>
         </div>
-        <div class="row" id="News" style="margin-top:30px">
+        <div class="row" id="News">
         </div>
     </div>
 </body>

@@ -15,7 +15,7 @@ class SearchResults(Resource):
         print url
         request = urllib2.Request(url)
         request.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0')
-        opener = urllib2.build_opener()  
+        opener = urllib2.build_opener()
         page=opener.open(request)
         soup=BeautifulSoup(page.read())
 
@@ -25,21 +25,32 @@ class SearchResults(Resource):
         timestamps = []
 
         results = soup.findAll('li',{'class':'g'})
+        print len(results)
         for result in results:
             soup1 = BeautifulSoup(str(result))
             statement = ""
+
             try:
-                titles.append(soup1.findAll('h3',{'class':'r'})[0].get_text())
-                print soup1.findAll('h3',{'class':'r'})[0].get_text()
-                links.append(soup1.find('h3',{'class':'r'}).findChildren()[0]['href'])
-                statement = soup1.find('span',{'class','st'})
-                soup2 = BeautifulSoup(str(statement))
-                timestamps.append( soup2.find('span',{'class':'f'}).text)
-                descriptions.append( statement.get_text())
+                titles.append(unicodedata.normalize('NFKD', soup1.findAll('h3',{'class':'r'})[0].get_text()).encode('ascii','ignore'))
+            except:
+                titles.append('')
+            try:
+                links.append(unicodedata.normalize('NFKD', soup1.find('h3',{'class':'r'}).findChildren()[0]['href']).encode('ascii','ignore'))
+            except:
+                links.append('')
+            statement = soup1.find('span',{'class','st'})
+            soup2 = BeautifulSoup(str(statement))
+            try:
+                timestamps.append(unicodedata.normalize('NFKD', soup2.find('span',{'class':'f'}).text).encode('ascii','ignore'))
             except:
                 timestamps.append('')
+            try:
+                descriptions.append(unicodedata.normalize('NFKD', statement.get_text()).encode('ascii','ignore'))
+            except:
                 descriptions.append('')
+
         value=[]
+        print len(titles)
         for i in range(0,len(titles)):
             value.append({"title":titles[i],"description":descriptions[i],"url":links[i],"timestamp":timestamps[i]})
 
@@ -58,14 +69,14 @@ class GetCategories(Resource):
             print type(returnvalue)
             return returnvalue
 
-             
+
 class GetNews2(Resource):
         def get(self, category):
             url="http://www.theguardian.com/us"
             page=urllib2.urlopen(url)
             soup = BeautifulSoup(page.read())
             #print type(soup)
-            links1 = [] 
+            links1 = []
             links2 = []
 
             link1 = []
@@ -161,7 +172,7 @@ class GetNews2(Resource):
             for i in range(0, len(links2)):
                     #if cat2[i]==category:
                     value.append({"title":headlines2[i],"description":desc2[i],"url":links2[i],"time":time2[i]})
-            
+
             return json.dumps(value)
 
 class GetNews(Resource):
@@ -170,7 +181,7 @@ class GetNews(Resource):
             page=urllib2.urlopen(url)
             soup = BeautifulSoup(page.read())
             #print type(soup)
-            links1 = [] 
+            links1 = []
             links2 = []
 
             link1 = []
@@ -199,12 +210,12 @@ class GetNews(Resource):
             print day.text,day_of_month.text,month.text,year.text
 
             entireText = soup.findAll('div',{'class':'fc-container__inner'})
-            
+
             soup2 = BeautifulSoup(str(entireText))
 
             entireText = soup2.findAll('div',{'data-title':category})
 
-            for text in entireText: 
+            for text in entireText:
                     new1 = text.findAll('h1',{'class':'fc-item__title'})
                     new2 = text.findAll('h2',{'class':'fc-item__title'})
                     link1 = []
@@ -265,13 +276,13 @@ class GetNews(Resource):
             for i in range(0, len(links2)):
                     if cat2[i]==category:
                         value.append({"title":headlines2[i],"description":desc2[i],"url":links2[i],"time":time2[i]})
-            
+
             return json.dumps(value)
-            
+
 
 api.add_resource(GetNews2,'/category/<string:category>')
 api.add_resource(SearchResults,'/search/<string:query>')
-api.add_resource(GetCategories, '/getcategories')           
+api.add_resource(GetCategories, '/getcategories')
 
 if __name__ == '__main__':
         app.run(debug=True,threaded=True)
