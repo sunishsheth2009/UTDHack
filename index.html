@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function LoadCategory(category){
+            console.log(category);
+            $.get('http://localhost:5000/category/'+category,function(data){
+               data2=JSON.parse(data);
+               document.getElementById('News').innerHTML="";
+               console.log(data);
+                for (var i=0;i<data2.length;i++)
+                {
+                document.getElementById('News').innerHTML+='<a href="'+data2[i].url+'"><h1>'+data2[i].title+'</h1></a><p>'+data2[i].url+'</p><p>'+data2[i].description+'</p>';
+                }
+
+            });
+        };
+        
+        $('document').ready(function(){
+            $.get('http://localhost:5000/getcategories',function(data2){
+                    data=JSON.parse(data2);
+                    var list=data.list;
+                    console.log(list);
+                    for(var i=0;i< list.length;i++){
+                        console.log(list[i].category);
+                        document.getElementById("categorylist").innerHTML+='<li role="presentation" id="'+list[i].category+'" onclick="LoadCategory(this.id)"><a role="menuitem" tabindex="-1" href="#">'+list[i].category+'</a></li>';
+                    };
+                });
+            //var xhr=new XMLHttpRequest();
+            //xhr.onreadystatechange=function()
+            //{
+           //     if (xhr.readyState==4 && xhr.status==200)
+           //     {
+           //         var arr=JSON.parse(xhr.responseText);
+           //         console.log(arr);
+
+                               //     }
+            //}
+            //xhr.open('GET','http://localhost:5000/getcategories',true);
+            //xhr.send();
+        });
+//        var ulist=document.getElementById('categorylist');
+//        $('ul#categorylist li').click(function(e){
+//                console.log('event called');
+//                    LoadCategory(e.target.value);
+//                    });
+ 
+            </script>
+</head>
+<title>News API Test</title>
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">News API Test</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container" style="margin-top:100px">
+        <div class="row">
+            <div class="col-lg-3">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                  Get specific headlines
+                    <span class="caret"></span>
+                </button>
+                <ul id="categorylist" class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                </ul>
+            </div>
+            </div>
+            <div class="col-lg-4">
+                <input type="text" class="form-control" placeholder="Search.."/>
+            </div>
+        </div>
+        <div class="row" id="News">
+        </div>
+    </div>
+</body>
+</html>
