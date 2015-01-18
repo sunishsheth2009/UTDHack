@@ -9,6 +9,41 @@ import json
 app = Flask(__name__)
 api = restful.Api(app)
 
+class SearchResults(Resource):
+    def get(self,query):
+        url="https://www.google.com/search?q="+query+"+site:www.theguardian.com"
+        print url
+        request = urllib2.Request(url)
+        request.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0')
+        opener = urllib2.build_opener()  
+        page=opener.open(request)
+        soup=BeautifulSoup(page.read())
+
+        links = []
+        titles = []
+        descriptions = []
+        timestamps = []
+
+        results = soup.findAll('li',{'class':'g'})
+        for result in results:
+            soup1 = BeautifulSoup(str(result))
+            titles.append(soup1.find('h3',{'class':'r'}).get_text())
+            print soup1.find('h3',{'class':'r'}).get_text()
+            links.append(soup1.find('h3',{'class':'r'}).findChildren()[0]['href'])
+            statement = soup1.find('span',{'class','st'})
+            soup2 = BeautifulSoup(str(statement))
+            try:
+                timestamps.append( soup2.find('span',{'class':'f'}).text)
+                descriptions.append( statement.get_text())
+            except:
+                timestamps.append('')
+                descriptions.append(statement.get_text())
+        value=[]
+        for i in range(0,len(titles)):
+            value.append({"title":titles[i],"description":descriptions[i],"url":links[i],"timestamp":timestamps[i]})
+
+        return json.dumps(value)
+
 class GetNews(Resource):
         def get(self, category):
             url="http://www.theguardian.com/us"
@@ -109,15 +144,16 @@ class GetNews(Resource):
             cnt=0
             for i in range(0, len(links1)):
                     if cat1[i]==category:
-                        value.append({"title":headlines1[i],"description":desc1[i],"url":links1[i]})
+                        value.append({"title":headlines1[i],"description":desc1[i],"url":links1[i],"time":time1[i]})
             for i in range(0, len(links2)):
                     if cat2[i]==category:
-                        value.append({"title":headlines2[i],"description":desc2[i],"url":links2[i]})
+                        value.append({"title":headlines2[i],"description":desc2[i],"url":links2[i],"time":time2[i]})
             
             return json.dumps(value)
             
 
-api.add_resource(GetNews,'/<string:category>')
+api.add_resource(GetNews,'/category/<string:category>')
+api.add_resource(SearchResults,'/search/<string:query>')
                 
 
 if __name__ == '__main__':
