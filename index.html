@@ -11,7 +11,7 @@
         function GetSearch(){
             query=document.getElementById('search').value;
             query.replace(' ','%20');
-            document.getElementById('News').innerHTML='<img src="loading.gif" alt="Loading..." height="42" width="42">';
+            document.getElementById('News').innerHTML='<img src="loading.gif" alt="Loading..." height="402" width="704">';
             $.get('http://localhost:5000/search/'+query,function(data){
                 data2=JSON.parse(data);
                 document.getElementById('News').innerHTML="";
@@ -29,7 +29,7 @@
         function LoadCategory(category){
             console.log(category);
             document.getElementById('dropdownMenu1').innerHTML=category+" <span class='caret'></span>";
-            document.getElementById('News').innerHTML='<img src="loading.gif" alt="Loading..." height="200" width="200">';
+            document.getElementById('News').innerHTML='<img src="loading.gif" alt="Loading..." height="402" width="704">';
             category.replace(' ','%20');
             $.get('http://localhost:5000/category/'+category,function(data){
                data2=JSON.parse(data);
